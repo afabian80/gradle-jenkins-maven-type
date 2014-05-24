@@ -41,15 +41,25 @@ jenkins {
     }
 
     jobs {
-        build_job {
+        compile_job_1 {
             type 'maven'
             dsl {
                 using 'some_base'
                 name 'generated-compile-job'
-                description 'Sample Maven job created from Gradle.'
-                scm {
-                    git 'https://github.com/afabian80/maven-simple.git'
+                description 'Sample Maven compile job created from Gradle.'
+                goals 'clean package'
+                publishers {
+                    downstream 'generated-test-job', 'UNSTABLE'
                 }
+            }
+        }
+
+         test_job_1 {
+            type 'maven'
+            dsl {
+                using 'some_base'
+                name 'generated-test-job'
+                description 'Sample Maven test job created from Gradle.'
                 goals 'clean package'
             }
         }
