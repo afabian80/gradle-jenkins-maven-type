@@ -21,20 +21,20 @@ jenkins {
 
     defaultServer servers.testing
 
+    //See https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-DSL-Commands
     jobs {
         build_job {
-            //type 'maven' // this does not like the maven 'steps'
+            type 'maven'
             dsl {
+                description 'Sample Maven job created from Gradle'
                 scm {
                     git 'https://github.com/afabian80/maven-simple.git'
                 }
                 triggers {
                     scm 'H/15 * * * *'
                 }
-                steps {
-                    maven 'clean compile'
-                    maven 'package'
-                }
+                mavenOpts '-Xmx256M'
+                goals 'clean package'
                 publishers {
                     archiveJunit 'target/surefire-reports/*.xml'
                     archiveArtifacts 'target/*.jar'
