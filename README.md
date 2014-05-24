@@ -1,0 +1,2 @@
+gradle-jenkins-maven-type
+=========================
