@@ -17,13 +17,21 @@ jenkins {
         }
     }
 
+    templates {
+        base {
+            xml file('templates/maven-base.xml')
+        }
+    }
+
     defaultServer servers.testing
 
     jobs {
         job1 {
             definition {
                 name 'generated-1'
-                xml file('templates/maven-base.xml')
+                xml templates.base.override { projectXml ->
+                    projectXml.disabled = 'true'
+                }
             }
         }
     }
