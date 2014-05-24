@@ -1,4 +1,5 @@
 // Based on: https://github.com/ghale/gradle-jenkins-plugin/wiki
+// DSL help: https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-DSL-Commands
 
 apply plugin: 'jenkins'
 
@@ -21,13 +22,10 @@ jenkins {
 
     defaultServer servers.testing
 
-    //See https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-DSL-Commands
-    jobs {
-        build_job {
+    templates {
+        some_base {
             type 'maven'
             dsl {
-                name 'generated-compile-job'
-                description 'Sample Maven job created from Gradle.'
                 scm {
                     git 'https://github.com/afabian80/maven-simple.git'
                 }
@@ -35,10 +33,24 @@ jenkins {
                     scm 'H/15 * * * *'
                 }
                 mavenOpts '-Xmx256M'
-                goals 'clean package'
                 publishers {
                     archiveArtifacts 'target/*.jar'
                 }
+            }
+        }
+    }
+
+    jobs {
+        build_job {
+            type 'maven'
+            dsl {
+                using 'some_base'
+                name 'generated-compile-job'
+                description 'Sample Maven job created from Gradle.'
+                scm {
+                    git 'https://github.com/afabian80/maven-simple.git'
+                }
+                goals 'clean package'
             }
         }
     }
