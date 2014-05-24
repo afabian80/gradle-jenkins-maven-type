@@ -26,7 +26,8 @@ jenkins {
         build_job {
             type 'maven'
             dsl {
-                description 'Sample Maven job created from Gradle'
+                name 'generated-compile-job'
+                description 'Sample Maven job created from Gradle.'
                 scm {
                     git 'https://github.com/afabian80/maven-simple.git'
                 }
@@ -36,7 +37,6 @@ jenkins {
                 mavenOpts '-Xmx256M'
                 goals 'clean package'
                 publishers {
-                    archiveJunit 'target/surefire-reports/*.xml'
                     archiveArtifacts 'target/*.jar'
                 }
             }
