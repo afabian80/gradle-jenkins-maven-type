@@ -1,0 +1,30 @@
+apply plugin: 'jenkins'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.terrafolio:gradle-jenkins-plugin:1.1.0'
+    }
+}
+
+jenkins {
+    servers {
+        testing {
+            url 'http://localhost:8080'
+            secure false
+        }
+    }
+
+    defaultServer servers.testing
+
+    jobs {
+        job1 {
+            definition {
+                name 'generated-1'
+                xml file('templates/maven-base.xml')
+            }
+        }
+    }
+}
