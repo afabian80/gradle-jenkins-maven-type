@@ -1,3 +1,5 @@
+// Based on: https://github.com/ghale/gradle-jenkins-plugin/wiki
+
 apply plugin: 'jenkins'
 
 buildscript {
@@ -17,20 +19,25 @@ jenkins {
         }
     }
 
-    templates {
-        base {
-            xml file('templates/maven-base.xml')
-        }
-    }
-
     defaultServer servers.testing
 
     jobs {
-        job1 {
-            definition {
-                name 'generated-1'
-                xml templates.base.override { projectXml ->
-                    projectXml.disabled = 'true'
+        build_job {
+            //type 'maven' // this does not like the maven 'steps'
+            dsl {
+                scm {
+                    git 'https://github.com/afabian80/maven-simple.git'
+                }
+                triggers {
+                    scm 'H/15 * * * *'
+                }
+                steps {
+                    maven 'clean compile'
+                    maven 'package'
+                }
+                publishers {
+                    archiveJunit 'target/surefire-reports/*.xml'
+                    archiveArtifacts 'target/*.jar'
                 }
             }
         }
