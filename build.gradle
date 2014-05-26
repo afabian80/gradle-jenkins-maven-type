@@ -26,6 +26,7 @@ jenkins {
         some_base {
             type 'maven'
             dsl {
+                logRotator(20, 2)
                 scm {
                     git 'https://github.com/afabian80/maven-simple.git'
                 }
@@ -87,6 +88,34 @@ jenkins {
                     matrix.appendNode('anything', [who: 'me', to_whom: 'to me'], 'wanted')
                 }
             }
+        }
+
+        modular_role_job {
+            type 'maven'
+            dsl {
+                configure JobHelper.logRotatorRole(10)
+                configure JobHelper.mavenOptsRole()
+            }
+        }
+    }
+}
+
+class JobHelper {
+    static Closure logRotatorRole(days) {
+        return { project ->
+            // overwriting existing node (use 'project << logRotator' to append)
+            project / 'logRotator' { 
+                daysToKeep(-1)
+                numToKeep(days)
+                artifactDaysToKeep(-1)
+                artifactNumToKeep(-1)
+            }
+        }
+    }
+
+    static Closure mavenOptsRole() {
+        return { project ->
+            (project / 'mavenOpts').setValue('-Xmx1024')
         }
     }
 }
