@@ -42,6 +42,8 @@ jenkins {
     }
 
     jobs {
+
+        // Sample job to extend a template. Also triggers a downstream job.
         compile_job_1 {
             type 'maven'
             dsl {
@@ -55,7 +57,8 @@ jenkins {
             }
         }
 
-         test_job_1 {
+        // Sample job, extending a template.
+        test_job_1 {
             type 'maven'
             dsl {
                 using 'some_base'
@@ -65,6 +68,7 @@ jenkins {
             }
         }
 
+        // Sample job with a configure block. Overwriting 2 xml nodes.
         custom_job {
             type 'maven'
             dsl {
@@ -77,6 +81,7 @@ jenkins {
             }
         }
 
+        // Sample job with a configure block. Appending a new node (matrix plugin).
         custom_job_2 {
             type 'maven'
             dsl {
@@ -90,11 +95,21 @@ jenkins {
             }
         }
 
+        // Sample job putting together configure blocks with helper methods
         modular_role_job {
             type 'maven'
             dsl {
                 configure JobHelper.logRotatorRole(15)
                 configure JobHelper.mavenOptsRole()
+            }
+        }
+
+        // Sample job putting together a 'dsl' block with helper methods for parent nodes (e.g. extending the scm node)
+        modular_role_job_2 {
+            type 'maven'
+            dsl {
+                name = 'modular_role_job_2'
+                scm JobHelper.scmRole('http://svn-server.hu/svn/path') // hook in a parametrized scm section you want
             }
         }
     }
@@ -113,9 +128,21 @@ class JobHelper {
         }
     }
 
+    // Sample to extend the configure section
     static Closure mavenOptsRole() {
         return { project ->
             project.div('mavenOpts').setValue('-Xmx1024') // div() is equivalent to "/", e.g. project / 'mavenOpts'
+        }
+    }
+
+    // Sample to extend the dsl section
+    static Closure scmRole(url) {
+        return {
+            svn(url, 'working-dir') { svnNode ->
+                svnNode / browser(class:'hudson.scm.browsers.FishEyeSVN') {
+                rootModule 'my_root_module'
+                }
+            }
         }
     }
 }
