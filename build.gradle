@@ -63,5 +63,30 @@ jenkins {
                 goals 'clean package'
             }
         }
+
+        custom_job {
+            type 'maven'
+            dsl {
+                name = 'customized-job'
+                using 'some_base'
+                configure { project ->
+                    (project / 'disabled').setValue('false')
+                    (project / 'description').setValue('This is a customized xml node')
+                }
+            }
+        }
+
+        custom_job_2 {
+            type 'maven'
+            dsl {
+                name = 'customized-job-2'
+                using 'some_base'
+                configure { project ->
+                    def matrix = project / 'properties' / 'hudson.security.AuthorizationMatrixProperty'
+                    matrix.appendNode('permission', 'hudson.model.Run.Delete:jryan')
+                    matrix.appendNode('anything', [who: 'me', to_whom: 'to me'], 'wanted')
+                }
+            }
+        }
     }
 }
