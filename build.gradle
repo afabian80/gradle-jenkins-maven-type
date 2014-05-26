@@ -93,7 +93,7 @@ jenkins {
         modular_role_job {
             type 'maven'
             dsl {
-                configure JobHelper.logRotatorRole(10)
+                configure JobHelper.logRotatorRole(15)
                 configure JobHelper.mavenOptsRole()
             }
         }
@@ -104,9 +104,9 @@ class JobHelper {
     static Closure logRotatorRole(days) {
         return { project ->
             // overwriting existing node (use 'project << logRotator' to append)
-            project / 'logRotator' { 
-                daysToKeep(-1)
-                numToKeep(days)
+            project.div('logRotator') {  // div() is equivalent to use the "/" operator (e.g. project / 'logRotator')
+                daysToKeep(days)
+                numToKeep(10)
                 artifactDaysToKeep(-1)
                 artifactNumToKeep(-1)
             }
@@ -115,7 +115,7 @@ class JobHelper {
 
     static Closure mavenOptsRole() {
         return { project ->
-            (project / 'mavenOpts').setValue('-Xmx1024')
+            project.div('mavenOpts').setValue('-Xmx1024')
         }
     }
 }
