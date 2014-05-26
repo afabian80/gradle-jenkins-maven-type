@@ -104,7 +104,7 @@ class JobHelper {
     static Closure logRotatorRole(days) {
         return { project ->
             // overwriting existing node (use 'project << logRotator' to append)
-            project.div('logRotator') {  // div() is equivalent to use the "/" operator (e.g. project / 'logRotator')
+            project / 'logRotator' {
                 daysToKeep(days)
                 numToKeep(10)
                 artifactDaysToKeep(-1)
@@ -115,7 +115,7 @@ class JobHelper {
 
     static Closure mavenOptsRole() {
         return { project ->
-            project.div('mavenOpts').setValue('-Xmx1024')
+            project.div('mavenOpts').setValue('-Xmx1024') // div() is equivalent to "/", e.g. project / 'mavenOpts'
         }
     }
 }
