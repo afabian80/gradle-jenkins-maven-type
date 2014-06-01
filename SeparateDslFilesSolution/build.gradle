@@ -1,0 +1,40 @@
+// Based on: https://github.com/ghale/gradle-jenkins-plugin/wiki
+// DSL help: https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-DSL-Commands
+
+apply plugin: 'jenkins'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.terrafolio:gradle-jenkins-plugin:1.1.0'
+    }
+}
+
+jenkins {
+    servers {
+        testing {
+            url 'http://localhost:8080'
+            secure false
+        }
+    }
+
+    defaultServer servers.testing
+
+    templates {
+        'base-template' {
+            type 'maven'
+            dsl {
+                scm {
+                    git 'git@git.somewhere.com/repo'
+                }
+                publishers {
+                    archiveArtifacts 'build/libs/*.jar'
+                }
+            }
+        }
+    }
+
+    dsl fileTree('job-definitions').include('*.dsl')
+}
